@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>for you ♡</title>
+<meta name="description" content="a little something for you">
+<meta property="og:title" content="you've got mail ♡">
+<meta property="og:description" content="open it, I made you something">
+<meta property="og:image" content="assets/envelope-closed.webp">
+<meta name="theme-color" content="#F3EEDF">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💌</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400;1,500&family=Pinyon+Script&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="assets/envelope-closed.webp">
+<link rel="preload" as="image" href="assets/envelope-open.webp">
+
+<style>
+:root{
+  --cream:#F3EEDF;
+  --paper:#FBF8F0;
+  --gingham:rgba(118,152,203,.42);
+  --navy:#1F3560;
+  --denim:#3F5F93;
+  --powder:#BFD4EC;
+  --silver:#C9CDD3;
+
+  --script:"Pinyon Script", "Snell Roundhand", "Apple Chancery", cursive;
+  --serif:"Cormorant Garamond", "Cormorant", Garamond, Georgia, serif;
+  --hand:"Caveat", "Bradley Hand", "Segoe Print", cursive;
+
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*,*::before,*::after{box-sizing:inherit}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{
+  margin:0;height:100%;overflow:hidden;
+  color:var(--navy);
+  font-family:var(--serif);
+  background-color:var(--cream);
+  background-image:
+    linear-gradient(90deg,var(--gingham) 50%,transparent 0),
+    linear-gradient(var(--gingham) 50%,transparent 0);
+  background-size:68px 68px;
+  -webkit-tap-highlight-color:transparent;
+}
+/* paper grain over the gingham */
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.35;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .55  0 0 0 0 .5  0 0 0 0 .42  0 0 0 .35 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+:focus-visible{outline:2.5px dashed var(--denim);outline-offset:6px;border-radius:6px}
+img{max-width:100%;display:block;-webkit-user-drag:none;user-select:none}
+
+/* ---------- scenes ---------- */
+.scene{
+  position:fixed;inset:0;z-index:1;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:calc(env(safe-area-inset-top,0px) + 24px) 20px calc(env(safe-area-inset-bottom,0px) + 24px);
+  opacity:0;visibility:hidden;transform:scale(.97);filter:blur(4px);
+  transition:opacity .7s ease,transform .7s ease,filter .7s ease,visibility 0s .7s;
+}
+.scene.on{opacity:1;visibility:visible;transform:none;filter:none;transition:opacity .7s ease .15s,transform .7s ease .15s,filter .7s ease .15s,visibility 0s}
+
+/* decorative stickers */
+.clef{position:fixed;z-index:12;width:clamp(58px,13vw,96px);right:4vw;bottom:calc(env(safe-area-inset-bottom,0px) + 4vh);transform:rotate(9deg);cursor:pointer;transition:transform .3s}
+.clef img{width:100%;filter:drop-shadow(0 6px 8px rgba(31,53,96,.25))}
+.clef:hover{transform:rotate(0deg) scale(1.06)}
+.clef.playing img{animation:groove .9s ease-in-out infinite}
+@keyframes groove{0%,100%{rotate:-7deg}50%{rotate:7deg}}
+.clef.playing::before,.clef.playing::after{content:"♪";position:absolute;top:0;left:10%;font-size:1.4rem;color:var(--denim);animation:note 2s ease-out infinite;pointer-events:none}
+.clef.playing::after{content:"♫";left:60%;animation-delay:1s}
+@keyframes note{0%{opacity:0;transform:translateY(0) rotate(0)}20%{opacity:1}100%{opacity:0;transform:translateY(-50px) rotate(20deg)}}
+.music-tag{position:absolute;left:50%;bottom:-8px;translate:-50% 0;rotate:-9deg;white-space:nowrap;font-family:var(--hand);font-size:1.1rem;font-weight:600;color:var(--navy);background:var(--paper);padding:0 10px 2px;border-radius:999px;box-shadow:0 3px 0 rgba(31,53,96,.14)}
+.twinkle{position:fixed;z-index:1;pointer-events:none;color:#fff;font-size:22px;text-shadow:0 0 6px rgba(255,255,255,.9);animation:twinkle 3.2s ease-in-out infinite}
+@keyframes twinkle{0%,100%{opacity:.25;transform:scale(.8) rotate(0)}50%{opacity:1;transform:scale(1.1) rotate(20deg)}}
+
+/* ---------- scene 1: envelope ---------- */
+.stage{
+  position:relative;width:min(88vw,430px,calc((100dvh - 230px) * .84));
+  aspect-ratio:900/1068;container-type:inline-size;
+}
+.env-closed,.env-open{position:absolute;left:0;width:100%;filter:drop-shadow(0 18px 22px rgba(31,53,96,.28))}
+.env-closed-btn{
+  position:absolute;left:0;right:0;top:18%;cursor:pointer;
+  animation:float 3.6s ease-in-out infinite;
+  transition:opacity .55s ease,transform .55s ease;
+}
+.env-closed{position:relative;transform:rotate(-4deg)}
+.env-closed-btn:hover .env-closed{transform:rotate(-2deg) scale(1.02);transition:transform .3s}
+@keyframes float{0%,100%{translate:0 0}50%{translate:0 -10px}}
+.stage.shake .env-closed{animation:shake .5s ease-in-out}
+@keyframes shake{0%,100%{transform:rotate(-4deg)}20%{transform:rotate(-8deg)}40%{transform:rotate(1deg)}60%{transform:rotate(-7deg)}80%{transform:rotate(-2deg)}}
+
+.env-open-wrap{position:absolute;inset:0;opacity:0;transform:translateY(30px) scale(.9) rotate(4deg);pointer-events:none;transition:opacity .8s ease,transform .9s cubic-bezier(.2,1.4,.4,1)}
+.env-open{position:relative}
+.stage.open .env-closed-btn{opacity:0;transform:translateY(-30px) scale(1.06);pointer-events:none;animation:none}
+.stage.open .env-open-wrap{opacity:1;transform:none;pointer-events:auto}
+
+/* the message written onto the card inside the open envelope */
+.card-note{
+  position:absolute;left:4.5%;top:19.5%;width:66%;
+  transform:rotate(5.6deg);transform-origin:top left;
+  text-align:center;color:var(--navy);
+}
+.card-note h1{
+  margin:0;font-family:var(--script);font-weight:400;
+  font-size:11.6cqw;line-height:.95;letter-spacing:.005em;
+  clip-path:inset(0 100% 0 0);
+}
+.card-note h1 span{display:block}
+.card-note p{
+  margin:3.4cqw 0 0;font-family:var(--hand);font-size:5.1cqw;line-height:1.1;color:var(--denim);
+  opacity:0;transform:translateY(6px);transition:opacity .8s ease 2.6s,transform .8s ease 2.6s;
+}
+.stage.open .card-note h1{animation:write 2.4s cubic-bezier(.45,.05,.4,1) .8s forwards}
+.stage.open .card-note p{opacity:1;transform:none}
+@keyframes write{to{clip-path:inset(0 -5% 0 0)}}
+
+.hint{
+  margin:0;white-space:nowrap;font-family:var(--hand);font-size:1.6rem;color:var(--navy);
+  background:var(--paper);padding:2px 16px 4px;border-radius:999px;
+  box-shadow:0 4px 0 rgba(31,53,96,.12);
+  transition:opacity .4s;
+}
+.stage > .hint{position:absolute;left:50%;top:80%;translate:-50% 0;pointer-events:none}
+.stage.open > .hint{opacity:0}
+
+.next{
+  position:absolute;right:-2%;bottom:-6%;
+  display:flex;flex-direction:column;align-items:center;gap:2px;
+  opacity:0;transform:scale(.4) rotate(-40deg);pointer-events:none;
+  transition:opacity .5s ease,transform .7s cubic-bezier(.3,1.6,.5,1);
+}
+.next.show{opacity:1;transform:none;pointer-events:auto}
+.next img{width:clamp(76px,22cqw,104px);filter:drop-shadow(0 8px 10px rgba(31,53,96,.35));transition:transform .3s}
+.next:hover img{transform:rotate(14deg) scale(1.05)}
+.next span{font-family:var(--hand);font-size:1.55rem;font-weight:600;color:var(--navy);background:var(--paper);padding:0 12px 2px;border-radius:999px;margin-top:-10px;box-shadow:0 3px 0 rgba(31,53,96,.12)}
+.next.show img{animation:pulse 2.4s ease-in-out 1s infinite}
+@keyframes pulse{0%,100%{scale:1}50%{scale:1.07}}
+
+.burst{position:absolute;left:50%;top:50%;pointer-events:none;font-size:22px;color:var(--denim);animation:fly 1.4s ease-out forwards}
+@keyframes fly{0%{opacity:1;transform:translate(-50%,-50%) scale(.4)}100%{opacity:0;transform:translate(calc(-50% + var(--x)),calc(-50% + var(--y))) scale(1.2) rotate(var(--r))}}
+
+/* ---------- scene 2: the three little things ---------- */
+.choose-title{margin:0;font-family:var(--script);font-weight:400;font-size:clamp(2.6rem,10vw,4.2rem);line-height:1;text-align:center;text-shadow:0 2px 0 var(--cream),0 0 18px var(--cream)}
+.choose-sub{margin:6px 0 0;font-family:var(--hand);font-size:1.5rem;background:var(--paper);padding:0 14px 2px;border-radius:999px}
+.seesaw{
+  display:flex;align-items:center;justify-content:center;gap:clamp(10px,3.5vw,40px);
+  margin:clamp(40px,8vh,80px) 0 clamp(26px,5vh,50px);width:100%;
+}
+.thing{position:relative;width:clamp(96px,27vw,184px);animation:var(--anim) 3.4s ease-in-out infinite}
+.thing:nth-child(1){--anim:seesaw-a}
+.thing:nth-child(2){--anim:seesaw-mid}
+.thing:nth-child(3){--anim:seesaw-b}
+@keyframes seesaw-a{0%,100%{transform:translateY(-22px) rotate(-5deg)}50%{transform:translateY(22px) rotate(4deg)}}
+@keyframes seesaw-b{0%,100%{transform:translateY(22px) rotate(5deg)}50%{transform:translateY(-22px) rotate(-4deg)}}
+@keyframes seesaw-mid{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+
+.polaroid{
+  display:block;width:100%;background:var(--paper);
+  padding:7% 7% 0;border-radius:3px;
+  box-shadow:0 1px 0 #fff inset,0 14px 24px -8px rgba(31,53,96,.38),0 2px 4px rgba(31,53,96,.12);
+  transition:transform .3s cubic-bezier(.3,1.5,.5,1);
+}
+.thing:hover .polaroid,.thing:focus-visible .polaroid{transform:scale(1.06)}
+.polaroid .photo{display:block;aspect-ratio:1;overflow:hidden;background:#dfe7f2}
+.polaroid .photo img{width:100%;height:100%;object-fit:cover}
+.photo.car img{object-position:52% 60%;transform:scale(1.25)}
+.photo.watch img{object-position:50% 46%}
+.photo.letter{background:#fff}
+.photo.letter img{object-fit:contain;padding:6%}
+.polaroid .cap{display:block;font-family:var(--hand);font-weight:600;font-size:clamp(1.05rem,4.4vw,1.6rem);text-align:center;padding:5% 0 9%;line-height:1}
+.tape{position:absolute;top:-10px;left:50%;width:46%;height:20px;translate:-50% 0;rotate:-6deg;background:rgba(191,212,236,.82);box-shadow:0 1px 2px rgba(31,53,96,.15);z-index:2}
+.tape::before,.tape::after{content:"";position:absolute;top:0;bottom:0;width:6px;background:inherit}
+.thing:nth-child(2) .tape{rotate:5deg;background:rgba(201,205,211,.88)}
+.seen{
+  position:absolute;right:-12px;top:-14px;z-index:3;width:42px;height:42px;
+  display:grid;place-items:center;font-size:20px;color:var(--navy);
+  background:radial-gradient(circle at 35% 30%,#f4f6f8,var(--silver) 70%,#a9aeb6);
+  clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);
+  transform:scale(0) rotate(-60deg);transition:transform .5s cubic-bezier(.3,1.7,.5,1);
+}
+.thing.visited .seen{transform:scale(1) rotate(0)}
+
+.finale{
+  margin:0;max-width:30ch;text-align:center;font-family:var(--hand);font-size:1.6rem;line-height:1.15;
+  background:var(--paper);padding:10px 22px 12px;border-radius:14px;box-shadow:0 5px 0 rgba(31,53,96,.12);
+  opacity:0;transform:translateY(10px);transition:opacity .8s ease,transform .8s ease;
+}
+.finale.show{opacity:1;transform:none}
+
+/* ---------- overlays for each surprise ---------- */
+.sheet{
+  position:fixed;inset:0;z-index:10;overflow-y:auto;overflow-x:hidden;
+  background:rgba(243,238,223,.72);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);
+  opacity:0;visibility:hidden;transition:opacity .45s ease,visibility 0s .45s;
+}
+.sheet.on{opacity:1;visibility:visible;transition:opacity .45s ease,visibility 0s}
+.sheet-inner{
+  min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:calc(env(safe-area-inset-top,0px) + 70px) 20px calc(env(safe-area-inset-bottom,0px) + 48px);
+  transform:translateY(24px);transition:transform .5s cubic-bezier(.2,1.2,.4,1);
+}
+.sheet.on .sheet-inner{transform:none}
+.back{
+  position:fixed;z-index:11;left:16px;top:calc(env(safe-area-inset-top,0px) + 14px);
+  font-family:var(--hand);font-size:1.4rem;font-weight:600;
+  background:var(--paper);padding:2px 16px 4px;border-radius:999px;box-shadow:0 4px 0 rgba(31,53,96,.14);
+}
+.sheet h2{margin:0 0 4px;font-family:var(--script);font-weight:400;font-size:clamp(2.5rem,10vw,3.8rem);line-height:1.05;text-align:center}
+.lede{margin:0 0 26px;max-width:34ch;text-align:center;font-size:1.28rem;line-height:1.45;font-style:italic}
+
+/* car → ticket */
+.ticket{
+  position:relative;display:grid;grid-template-columns:1fr auto;width:min(100%,460px);
+  background:var(--paper);border-radius:16px;box-shadow:0 18px 30px -12px rgba(31,53,96,.4);
+  -webkit-mask:radial-gradient(circle 13px at calc(100% - 118px) 0,#0000 98%,#000) top/100% 51% no-repeat,radial-gradient(circle 13px at calc(100% - 118px) 100%,#0000 98%,#000) bottom/100% 51% no-repeat;
+          mask:radial-gradient(circle 13px at calc(100% - 118px) 0,#0000 98%,#000) top/100% 51% no-repeat,radial-gradient(circle 13px at calc(100% - 118px) 100%,#0000 98%,#000) bottom/100% 51% no-repeat;
+  transform:rotate(-2deg);
+}
+.ticket-main{padding:18px 18px 18px 22px}
+.ticket-photo{height:120px;border-radius:9px;overflow:hidden;margin-bottom:14px}
+.ticket-photo img{width:100%;height:100%;object-fit:cover;object-position:50% 58%}
+.ticket dl{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;margin:0}
+.ticket dt{font-family:var(--hand);font-size:1.05rem;color:var(--denim);line-height:1}
+.ticket dd{margin:0;font-weight:600;font-size:1.15rem;line-height:1.15}
+.ticket-stub{
+  width:118px;border-left:2px dashed var(--powder);padding:18px 12px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;
+}
+.ticket-stub b{font-family:var(--script);font-weight:400;font-size:2.1rem;line-height:.9}
+.ticket-stub small{font-family:var(--hand);font-size:1.05rem;line-height:1.05;color:var(--denim)}
+.barcode{width:70px;height:34px;margin-top:6px;background:repeating-linear-gradient(90deg,var(--navy) 0 2px,transparent 2px 4px,var(--navy) 4px 5px,transparent 5px 8px,var(--navy) 8px 11px,transparent 11px 12px)}
+.click-me{margin-top:8px;font-family:var(--hand);font-size:1.15rem;font-weight:600;line-height:1;color:var(--navy);animation:point 1.2s ease-in-out infinite}
+@keyframes point{0%,100%{transform:translateY(0)}50%{transform:translateY(5px)}}
+.song{display:inline-flex;align-items:center;gap:5px;padding:5px 12px 6px 9px;border-radius:999px;background:var(--navy);color:var(--paper);font-family:var(--hand);font-size:1.15rem;font-weight:600;line-height:1;text-decoration:none;box-shadow:0 3px 0 rgba(31,53,96,.25);transition:transform .2s}
+.song svg{width:13px;height:13px;fill:currentColor}
+.song:hover{transform:scale(1.07) rotate(-3deg)}
+.fineprint{margin:22px 0 0;font-family:var(--hand);font-size:1.3rem;text-align:center;max-width:30ch;line-height:1.15}
+
+/* watch → time */
+.arch{width:min(52vw,220px);margin-top:14px;aspect-ratio:3/4;border-radius:999px 999px 14px 14px;overflow:hidden;border:7px solid var(--paper);box-shadow:0 16px 28px -10px rgba(31,53,96,.45);margin-bottom:22px}
+.arch img{width:100%;height:100%;object-fit:cover;object-position:50% 47%}
+.clock{margin:0;font-variant-numeric:lining-nums tabular-nums;font-weight:600;font-size:clamp(2.4rem,11vw,3.6rem);line-height:1;letter-spacing:.02em}
+.clock small{font-size:.45em;font-weight:500;font-style:italic;margin-left:6px}
+.clock-note{margin:6px 0 0;font-family:var(--hand);font-size:1.45rem;text-align:center}
+.together{
+  margin-top:26px;background:var(--paper);border-radius:18px;padding:16px 18px 18px;text-align:center;
+  box-shadow:0 10px 22px -10px rgba(31,53,96,.4);width:min(100%,420px);
+}
+.together p{margin:0 0 10px;font-family:var(--hand);font-size:1.35rem}
+.units{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.units div{display:flex;flex-direction:column;align-items:center}
+.units b{font-size:1.9rem;font-weight:600;line-height:1;font-variant-numeric:lining-nums tabular-nums}
+.units span{font-family:var(--hand);font-size:1.05rem;color:var(--denim)}
+
+/* letter */
+.letter-env{width:min(72vw,300px);mix-blend-mode:multiply;cursor:pointer;animation:float 3.6s ease-in-out infinite;transition:opacity .6s ease,transform .7s ease}
+.letter-env-btn{display:flex;flex-direction:column;align-items:center}
+.letter-env-btn .hint{margin-top:6px}
+.letter-wrap{position:relative;width:min(100%,560px);display:grid}
+.letter-wrap > *{grid-area:1/1}
+.letter-env-btn{justify-self:center;align-self:center;transition:opacity .5s ease,transform .7s ease}
+.letter-wrap.opened .letter-env-btn{opacity:0;transform:translateY(80px) scale(.9);pointer-events:none}
+.paper{
+  position:relative;background:var(--paper);
+  padding:clamp(28px,7vw,52px) clamp(24px,7vw,56px) clamp(56px,10vw,72px);
+  border-radius:3px;box-shadow:0 26px 40px -18px rgba(31,53,96,.45),0 2px 6px rgba(31,53,96,.12);
+  opacity:0;transform:translateY(120px) scale(.55) rotate(3deg);pointer-events:none;
+  transition:opacity .6s ease .25s,transform 1s cubic-bezier(.2,1.15,.4,1) .25s;
+}
+.letter-wrap.opened .paper{opacity:1;transform:rotate(-.8deg);pointer-events:auto}
+.paper .dear{margin:0 0 6px;font-family:var(--script);font-size:clamp(2rem,8vw,2.6rem);font-weight:400;line-height:1.1}
+.paper p{margin:0;font-style:italic;font-size:clamp(1.14rem,4.3vw,1.32rem);line-height:1.62}
+.paper p + p{margin-top:1em}
+.paper .sign{font-family:var(--script);font-style:normal;font-size:clamp(1.9rem,7vw,2.4rem);line-height:1.15;margin-top:1.1em}
+.paper .ps{font-family:var(--hand);font-style:normal;font-size:1.3rem;color:var(--denim)}
+.paper .stamp{position:absolute;right:clamp(14px,4vw,26px);bottom:-26px;width:84px;transform:rotate(-12deg);filter:drop-shadow(0 6px 8px rgba(31,53,96,.35))}
+.tape-top{position:absolute;top:-12px;left:50%;width:120px;height:24px;translate:-50% 0;rotate:-3deg;background:rgba(191,212,236,.85)}
+
+@media (max-height:640px){
+  .seesaw{margin:28px 0 22px}
+  .choose-title{font-size:2.4rem}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;transition-delay:0s !important}
+  .card-note h1{clip-path:none}
+}
+</style>
+</head>
+<body>
+
+<span class="twinkle" style="left:8%;top:12%">✦</span>
+<span class="twinkle" style="right:12%;top:8%;animation-delay:.8s;font-size:16px">✦</span>
+<span class="twinkle" style="left:14%;bottom:16%;animation-delay:1.6s;font-size:18px">✦</span>
+<span class="twinkle" style="right:26%;bottom:30%;animation-delay:2.2s;font-size:14px">✦</span>
+<button class="clef" id="musicBtn" aria-label="Play our song" aria-pressed="false">
+  <img src="assets/clef.webp" alt="">
+  <span class="music-tag">play ♪</span>
+</button>
+<audio id="song" src="assets/song.mp3" loop preload="auto"></audio>
+
+<!-- ============ SCENE 1 · the envelope ============ -->
+<section class="scene on" id="scene-envelope" aria-label="envelope">
+  <div class="stage" id="stage">
+    <button class="env-closed-btn" id="openEnvelope" aria-label="Open the envelope">
+      <img class="env-closed" src="assets/envelope-closed.webp" alt="A navy envelope sealed with silver wax">
+    </button>
+
+    <div class="env-open-wrap" aria-live="polite">
+      <img class="env-open" src="assets/envelope-open.webp" alt="">
+      <div class="card-note">
+        <h1><span>Happy</span><span>Boyfriend's Day</span></h1>
+        <p id="cardLine">to my Shubhi Babyyyyyy ♡</p>
+      </div>
+      <button class="next" id="nextBtn" tabindex="-1">
+        <img src="assets/seal.webp" alt="">
+        <span>next</span>
+      </button>
+    </div>
+    <p class="hint" id="hint">tap to open ♡</p>
+  </div>
+</section>
+
+<!-- ============ SCENE 2 · three little things ============ -->
+<section class="scene" id="scene-choose" aria-label="three surprises">
+  <h2 class="choose-title">a few things for you</h2>
+  <p class="choose-sub">tap one ♡</p>
+
+  <div class="seesaw">
+    <button class="thing" data-open="car" aria-label="Open the car surprise">
+      <span class="tape"></span><span class="seen" aria-hidden="true">♡</span>
+      <span class="polaroid">
+        <span class="photo car"><img src="assets/car.webp" alt=""></span>
+        <span class="cap">let's go</span>
+      </span>
+    </button>
+    <button class="thing" data-open="watch" aria-label="Open the watch surprise">
+      <span class="tape"></span><span class="seen" aria-hidden="true">♡</span>
+      <span class="polaroid">
+        <span class="photo watch"><img src="assets/watch.webp" alt=""></span>
+        <span class="cap">all my time</span>
+      </span>
+    </button>
+    <button class="thing" data-open="letter" aria-label="Open the letter">
+      <span class="tape"></span><span class="seen" aria-hidden="true">♡</span>
+      <span class="polaroid">
+        <span class="photo letter"><img src="assets/letter.webp" alt=""></span>
+        <span class="cap">read me</span>
+      </span>
+    </button>
+  </div>
+
+  <p class="finale" id="finale">you found all three. come collect your hug now ♡</p>
+</section>
+
+<!-- ============ CAR ============ -->
+<div class="sheet" id="sheet-car" role="dialog" aria-modal="true" aria-label="the car surprise">
+  <button class="back" data-close>‹ back</button>
+  <div class="sheet-inner">
+    <h2>Passenger seat, reserved</h2>
+    <p class="lede">My favorite place in the world is right next to you doing stupid shit and talking stupid shit for hoursssss.</p>
+
+    <div class="ticket">
+      <div class="ticket-main">
+        <div class="ticket-photo"><img src="assets/car.webp" alt="A sports car parked outside"></div>
+        <dl>
+          <div><dt>from</dt><dd>wherever you are</dd></div>
+          <div><dt>to</dt><dd>anywhere you want</dd></div>
+          <div><dt>seat</dt><dd>right next to you</dd></div>
+          <div><dt>snacks</dt><dd>eating like fadasses (fav activity)</dd></div>
+        </dl>
+      </div>
+      <div class="ticket-stub">
+                <b>admit two</b>
+        <small>valid forever<br>no refunds</small>
+        <span class="click-me" aria-hidden="true">click me 👇</span>
+        <a class="song" href="https://open.spotify.com/track/3Cii56a7zi2w2mGRIb0PUg" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+          our song
+        </a>
+        <span class="barcode" aria-hidden="true"></span>
+      </div>
+    </div>
+
+    <p class="fineprint"></p>
+  </div>
+</div>
+
+<!-- ============ WATCH ============ -->
+<div class="sheet" id="sheet-watch" role="dialog" aria-modal="true" aria-label="the watch surprise">
+  <button class="back" data-close>‹ back</button>
+  <div class="sheet-inner">
+    <h2>All my time is yours</h2>
+    <div class="arch"><img src="assets/watch.webp" alt="A silver watch with a blue dial"></div>
+    <p class="clock" id="clock">--:--</p>
+    <div class="together" id="together" hidden>
+      <p>we've been us for</p>
+      <div class="units">
+        <div><b id="tDays">0</b><span>days</span></div>
+        <div><b id="tHours">0</b><span>hours</span></div>
+        <div><b id="tMins">0</b><span>minutes</span></div>
+        <div><b id="tSecs">0</b><span>seconds</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ LETTER ============ -->
+<div class="sheet" id="sheet-letter" role="dialog" aria-modal="true" aria-label="a letter for you">
+  <button class="back" data-close>‹ back</button>
+  <div class="sheet-inner">
+    <div class="letter-wrap" id="letterWrap">
+      <button class="letter-env-btn" id="openLetter" aria-label="Open the letter">
+        <img class="letter-env" src="assets/letter.webp" alt="A cream envelope covered in little stars">
+        <span class="hint">tap to read</span>
+      </button>
+
+      <article class="paper">
+        <span class="tape-top" aria-hidden="true"></span>
+        <!-- ✏️ EDIT THE LETTER HERE -->
+        <p class="dear" id="dear">To my favorite person,</p>
+        <p>Happy Boyfren's day to my shubhiii babyyy i love you sososo muchhh, genuinely you give me a reason to wake up joyful everyday and life is legit worth living and I get soooo muchhh happiness by jus talking to you and listening to you yap about random bs like its the cutest thing everrrrrrrrr.</p>
+        <p>Thank you for coming into my life and loving me so much, I can't put in words how grateful i am to have you w me. I cant wait to get jobs and live out our bestest lives together and have soooo muchhh more fun together.</p>
+        <p>You're the aloogadde palya to my masala dosa, you're the filter to my coffee, you're the burrito(quite literally fadass xD) to my california, you're the music to my earbuds, you're the bear to my bunny(iykyk), you're the twin-turbo setup to my V8 (i've no idea what it means i've googled it but ik you'll explain it to me xDDDD)</p>
+        <p>I love you sooo much my baby, know that i'll alwayssss be there for you during the good, the bad, the ugly (ba dum tss)</p>
+        <p class="sign">Yours, always,<br><span id="fromName">me</span> ♡</p>
+        <p class="ps">p.s. lil bit ragi mudde buddhi, but its okay, you're my ragi mudde buddhi and i love youuu ehhehehehe</p>
+        <img class="stamp" src="assets/seal.webp" alt="">
+      </article>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   ✏️ PERSONALIZE HERE
+   ============================================================ */
+const CONFIG = {
+  hisName: "Shubhang",          // e.g. "Arjun"  → shows on the card + letter. Leave "" to keep "my favorite person"
+  fromName: "Vanshitha",       // how you sign the letter, e.g. "Priya" or "your girl"
+  togetherSince: "2026-07-06"     // the day you started dating, as "YYYY-MM-DD" e.g. "2024-02-14" → shows a live counter on the watch page
+};
+/* ============================================================ */
+
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+
+// apply config
+if (CONFIG.hisName.trim()) {
+  $("#dear").textContent = `Dear ${CONFIG.hisName.trim()},`;
+}
+$("#fromName").textContent = CONFIG.fromName || "me";
+
+// preload the rest
+["car", "watch", "letter", "seal", "clef"].forEach(n => { const i = new Image(); i.src = `assets/${n}.webp`; });
+
+/* ---------- scene switching ---------- */
+function go(id) {
+  $$(".scene").forEach(s => s.classList.toggle("on", s.id === id));
+}
+
+/* ---------- envelope ---------- */
+const stage = $("#stage");
+const nextBtn = $("#nextBtn");
+let opened = false;
+
+$("#openEnvelope").addEventListener("click", () => {
+  if (opened) return;
+  opened = true;
+  stage.classList.add("shake");
+  setTimeout(() => {
+    stage.classList.add("open");
+    burst(stage, 14);
+  }, 480);
+  setTimeout(() => {
+    nextBtn.classList.add("show");
+    nextBtn.tabIndex = 0;
+    nextBtn.focus({ preventScroll: true });
+  }, 3600);
+});
+nextBtn.addEventListener("click", () => go("scene-choose"));
+
+function burst(host, n) {
+  const glyphs = ["♡", "✦", "♥", "✧"];
+  for (let i = 0; i < n; i++) {
+    const s = document.createElement("span");
+    s.className = "burst";
+    s.textContent = glyphs[i % glyphs.length];
+    const a = (Math.PI * 2 * i) / n + Math.random() * .4;
+    const d = 140 + Math.random() * 120;
+    s.style.setProperty("--x", Math.cos(a) * d + "px");
+    s.style.setProperty("--y", Math.sin(a) * d + "px");
+    s.style.setProperty("--r", (Math.random() * 120 - 60) + "deg");
+    s.style.color = i % 2 ? "var(--denim)" : "#fff";
+    s.style.fontSize = 16 + Math.random() * 16 + "px";
+    host.appendChild(s);
+    setTimeout(() => s.remove(), 1500);
+  }
+}
+
+/* ---------- surprises ---------- */
+const visited = new Set();
+let lastTrigger = null;
+
+$$("[data-open]").forEach(btn => btn.addEventListener("click", () => {
+  lastTrigger = btn;
+  openSheet(btn.dataset.open);
+  visited.add(btn.dataset.open);
+  btn.classList.add("visited");
+}));
+
+function openSheet(name) {
+  const sheet = $("#sheet-" + name);
+  sheet.classList.add("on");
+  sheet.scrollTop = 0;
+  setTimeout(() => $("[data-close]", sheet).focus({ preventScroll: true }), 50);
+  if (name === "watch") startClock();
+}
+function closeSheets() {
+  $$(".sheet.on").forEach(s => s.classList.remove("on"));
+  stopClock();
+  if (lastTrigger) lastTrigger.focus({ preventScroll: true });
+  if (visited.size === 3) setTimeout(() => $("#finale").classList.add("show"), 400);
+}
+$$("[data-close]").forEach(b => b.addEventListener("click", closeSheets));
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeSheets(); });
+
+/* letter opens on tap */
+$("#openLetter").addEventListener("click", () => {
+  $("#letterWrap").classList.add("opened");
+  burst($("#letterWrap"), 10);
+});
+
+/* ---------- watch: live clock + counter ---------- */
+let clockTimer = null;
+const since = CONFIG.togetherSince ? new Date(CONFIG.togetherSince + "T00:00:00") : null;
+if (since && !isNaN(since)) $("#together").hidden = false;
+
+function tick() {
+  const now = new Date();
+  let h = now.getHours(), m = now.getMinutes(), ampm = h >= 12 ? "pm" : "am";
+  h = h % 12 || 12;
+  $("#clock").innerHTML = `it's ${h}:${String(m).padStart(2, "0")}<small>${ampm}</small>`;
+  if (since && !isNaN(since)) {
+    let diff = Math.max(0, Math.floor((now - since) / 1000));
+    const d = Math.floor(diff / 86400); diff %= 86400;
+    const hh = Math.floor(diff / 3600); diff %= 3600;
+    const mm = Math.floor(diff / 60); const ss = diff % 60;
+    $("#tDays").textContent = d.toLocaleString();
+    $("#tHours").textContent = hh;
+    $("#tMins").textContent = mm;
+    $("#tSecs").textContent = ss;
+  }
+}
+function startClock() { tick(); clockTimer = setInterval(tick, 1000); }
+function stopClock() { clearInterval(clockTimer); }
+/* ---------- music ---------- */
+const song = $("#song");
+const musicBtn = $("#musicBtn");
+const musicTag = $(".music-tag");
+
+musicBtn.addEventListener("click", async () => {
+  if (song.paused) {
+    try { await song.play(); }
+    catch { musicTag.textContent = "no song yet"; }
+  } else {
+    song.pause();
+    song.currentTime = 0; // stop = back to the start
+  }
+});
+song.addEventListener("play", () => setMusic(true));
+song.addEventListener("pause", () => setMusic(false));
+
+function setMusic(on) {
+  musicBtn.classList.toggle("playing", on);
+  musicBtn.setAttribute("aria-pressed", on);
+  musicBtn.setAttribute("aria-label", on ? "Stop our song" : "Play our song");
+  musicTag.textContent = on ? "stop ♪" : "play ♪";
+}
+</script>
+</body>
+</html>
